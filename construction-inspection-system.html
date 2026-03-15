@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>施工巡查管理系统</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏗️</text></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1::before {
+            content: '🏗️';
+            font-size: 32px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 176, 155, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 65, 108, 0.4);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab {
+            padding: 16px 32px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab:hover {
+            color: #495057;
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            color: #1e3c72;
+            border-bottom-color: #1e3c72;
+            background: white;
+        }
+
+        .tab-badge {
+            background: #1e3c72;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .toolbar {
+            padding: 16px 24px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        th:hover {
+            background: #e9ecef;
+        }
+
+        th.sorted-asc::after {
+            content: ' ↑';
+            color: #1e3c72;
+        }
+
+        th.sorted-desc::after {
+            content: ' ↓';
+            color: #1e3c72;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-normal {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-abnormal {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-rectify {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .type-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .type-pipe {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .type-other {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn-edit {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .action-btn-edit:hover {
+            background: #bbdefb;
+        }
+
+        .action-btn-delete {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .action-btn-delete:hover {
+            background: #ffcdd2;
+        }
+
+        .action-btn-view {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .action-btn-view:hover {
+            background: #e1bee7;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            color: #1e3c72;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #343a40;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-group label .required {
+            color: #dc3545;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        .form-control:disabled {
+            background: #f8f9fa;
+            cursor: not-allowed;
+        }
+
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .radio-item input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .file-upload {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #1e3c72;
+            background: #f8f9fa;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-upload-text {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .file-list {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .file-item {
+            background: #e9ecef;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-item .remove-file {
+            cursor: pointer;
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .image-preview-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .image-preview-item .remove-image {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .location-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .location-input-group input {
+            flex: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state-text {
+            font-size: 18px;
+            margin-bottom: 24px;
+        }
+
+        .related-records {
+            margin-top: 16px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .related-records h4 {
+            margin-bottom: 12px;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .related-item {
+            padding: 10px 12px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .related-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .pagination button {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: #f8f9fa;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination button.active {
+            background: #1e3c72;
+            color: white;
+            border-color: #1e3c72;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .stat-icon {
+            font-size: 20px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #1e3c72;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 14px 24px;
+            background: #323232;
+            color: white;
+            border-radius: 8px;
+            z-index: 2000;
+            animation: toastSlideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .map-picker {
+            height: 300px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-top: 10px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-picker iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .map-coords {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .tab {
+                padding: 12px 20px;
+                white-space: nowrap;
+            }
+
+            .toolbar {
+                padding: 12px;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+            th, td {
+                padding: 10px 12px;
+            }
+
+            .modal-content {
+                max-height: 95vh;
+            }
+
+            .stats-bar {
+                padding: 12px;
+                gap: 12px;
+            }
+        }
+
+        .detail-view {
+            padding: 20px;
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .detail-section h3 {
+            color: #1e3c72;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .detail-row {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .detail-label {
+            width: 120px;
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+        .detail-value {
+            flex: 1;
+        }
+
+        .photo-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .photo-gallery img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .photo-gallery img:hover {
+            transform: scale(1.05);
+        }
+
+        .file-download-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .file-download-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .file-download-item a {
+            color: #1e3c72;
+            text-decoration: none;
+        }
+
+        .file-download-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>施工巡查管理系统</h1>
+            <div class="header-actions">
+                <button class="btn btn-info" onclick="exportToExcel()">
+                    📊 导出Excel
+                </button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="construction" onclick="switchTab('construction')">
+                🏗️ 施工管理表
+                <span class="tab-badge" id="construction-count">0</span>
+            </div>
+            <div class="tab" data-tab="inspection" onclick="switchTab('inspection')">
+                📋 巡查记录表
+                <span class="tab-badge" id="inspection-count">0</span>
+            </div>
+        </div>
+
+        <div class="stats-bar" id="stats-bar">
+            <div class="stat-item">
+                <span class="stat-icon">📊</span>
+                <span>总施工项目: <span class="stat-value" id="stat-total">0</span></span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🔧</span>
+                <span>管道施工: <span class="stat-value" id="stat-pipe">0</span></span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">📌</span>
+                <span>其他施工: <span class="stat-value" id="stat-other">0</span></span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">✅</span>
+                <span>巡查正常: <span class="stat-value" id="stat-normal">0</span></span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">⚠️</span>
+                <span>需整改: <span class="stat-value" id="stat-rectify">0</span></span>
+            </div>
+        </div>
+
+        <div class="toolbar" id="construction-toolbar">
+            <div class="search-box">
+                <input type="text" placeholder="搜索施工项目..." id="construction-search" oninput="filterData()">
+            </div>
+            <div class="filter-group">
+                <label>施工类型:</label>
+                <select id="construction-type-filter" onchange="filterData()">
+                    <option value="">全部</option>
+                    <option value="管道">管道</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="openConstructionModal()">
+                ➕ 新增施工项目
+            </button>
+        </div>
+
+        <div class="toolbar" id="inspection-toolbar" style="display: none;">
+            <div class="search-box">
+                <input type="text" placeholder="搜索巡查记录..." id="inspection-search" oninput="filterData()">
+            </div>
+            <div class="filter-group">
+                <label>巡查结果:</label>
+                <select id="inspection-result-filter" onchange="filterData()">
+                    <option value="">全部</option>
+                    <option value="正常">正常</option>
+                    <option value="异常">异常</option>
+                    <option value="需整改">需整改</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>关联项目:</label>
+                <select id="inspection-project-filter" onchange="filterData()">
+                    <option value="">全部</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="openInspectionModal()">
+                ➕ 新增巡查记录
+            </button>
+        </div>
+
+        <div class="table-container" id="construction-table-container">
+            <table id="construction-table">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable('construction', 'id')">序号</th>
+                        <th onclick="sortTable('construction', 'location')">定位</th>
+                        <th onclick="sortTable('construction', 'merchantName')">商户名称</th>
+                        <th onclick="sortTable('construction', 'constructionDate')">施工时间</th>
+                        <th onclick="sortTable('construction', 'constructionType')">施工类型</th>
+                        <th onclick="sortTable('construction', 'files')">施工文件</th>
+                        <th onclick="sortTable('construction', 'inspectionCount')">巡查次数</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="construction-tbody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-container" id="inspection-table-container" style="display: none;">
+            <table id="inspection-table">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable('inspection', 'id')">序号</th>
+                        <th onclick="sortTable('inspection', 'inspectionDate')">巡查日期</th>
+                        <th onclick="sortTable('inspection', 'inspector')">巡查人</th>
+                        <th onclick="sortTable('inspection', 'relatedProject')">关联施工项目</th>
+                        <th onclick="sortTable('inspection', 'result')">巡查结果</th>
+                        <th onclick="sortTable('inspection', 'photos')">巡查照片</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="inspection-tbody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination" id="construction-pagination"></div>
+        <div class="pagination" id="inspection-pagination" style="display: none;"></div>
+    </div>
+
+    <div class="modal" id="construction-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="construction-modal-title">新增施工项目</h2>
+                <button class="modal-close" onclick="closeModal('construction-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="construction-form">
+                    <input type="hidden" id="construction-id">
+                    <div class="form-group">
+                        <label>定位 <span class="required">*</span></label>
+                        <div class="location-input-group">
+                            <input type="text" class="form-control" id="construction-location" placeholder="输入地址或坐标" required>
+                            <button type="button" class="btn btn-secondary" onclick="openMapPicker()">📍 选点</button>
+                        </div>
+                        <div class="map-picker" id="map-picker" style="display: none;">
+                            <div style="text-align: center;">
+                                <p>地图选点功能</p>
+                                <p style="font-size: 12px; margin-top: 10px;">点击地图选择位置或输入坐标</p>
+                                <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
+                                    <input type="text" id="map-lat" placeholder="纬度" style="width: 100px; padding: 5px;">
+                                    <input type="text" id="map-lng" placeholder="经度" style="width: 100px; padding: 5px;">
+                                </div>
+                                <button type="button" class="btn btn-primary" style="margin-top: 15px;" onclick="confirmLocation()">确认位置</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>商户名称 <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="construction-merchant-name" maxlength="100" placeholder="请输入商户名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label>施工时间 <span class="required">*</span></label>
+                        <input type="date" class="form-control" id="construction-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>施工类型 <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-item">
+                                <input type="radio" name="construction-type" value="管道" checked>
+                                <span>管道</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="construction-type" value="其他">
+                                <span>其他</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>施工文件</label>
+                        <div class="file-upload" onclick="document.getElementById('construction-files').click()">
+                            <input type="file" id="construction-files" multiple accept=".doc,.docx,.pdf,.xls,.xlsx,.txt,.jpg,.jpeg,.png">
+                            <div class="file-upload-text">
+                                📎 点击上传文件（支持多文件，单个文件不超过10MB）
+                            </div>
+                        </div>
+                        <div class="file-list" id="construction-file-list"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="closeModal('construction-modal')">取消</button>
+                <button class="btn btn-primary" type="button" onclick="saveConstruction()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="inspection-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="inspection-modal-title">新增巡查记录</h2>
+                <button class="modal-close" onclick="closeModal('inspection-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="inspection-form">
+                    <input type="hidden" id="inspection-id">
+                    <div class="form-group">
+                        <label>巡查日期 <span class="required">*</span></label>
+                        <input type="datetime-local" class="form-control" id="inspection-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>巡查人 <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="inspector" placeholder="请输入巡查人姓名" required>
+                    </div>
+                    <div class="form-group">
+                        <label>关联施工项目 <span class="required">*</span></label>
+                        <select class="form-control" id="related-project" required>
+                            <option value="">请选择施工项目</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>巡查结果 <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-item">
+                                <input type="radio" name="inspection-result" value="正常" checked>
+                                <span>正常</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="inspection-result" value="异常">
+                                <span>异常</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="inspection-result" value="需整改">
+                                <span>需整改</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>巡查照片</label>
+                        <div class="file-upload" onclick="document.getElementById('inspection-photos').click()">
+                            <input type="file" id="inspection-photos" multiple accept="image/*">
+                            <div class="file-upload-text">
+                                📷 点击上传照片（支持多图片，单个图片不超过5MB）
+                            </div>
+                        </div>
+                        <div class="image-preview" id="inspection-photo-preview"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="closeModal('inspection-modal')">取消</button>
+                <button class="btn btn-primary" type="button" onclick="saveInspection()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="detail-modal-title">详情查看</h2>
+                <button class="modal-close" onclick="closeModal('detail-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="detail-content">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('detail-modal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="related-inspections-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>关联巡查记录</h2>
+                <button class="modal-close" onclick="closeModal('related-inspections-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="related-inspections-content">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('related-inspections-modal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let constructionData = [];
+        let inspectionData = [];
+        let currentTab = 'construction';
+        let currentSort = { field: 'id', direction: 'asc' };
+        let currentPage = { construction: 1, inspection: 1 };
+        const pageSize = 10;
+        let tempFiles = [];
+        let tempPhotos = [];
+
+        function init() {
+            loadData();
+            renderConstructionTable();
+            renderInspectionTable();
+            updateStats();
+            updateProjectFilter();
+            setupFileHandlers();
+        }
+
+        function loadData() {
+            const savedConstruction = localStorage.getItem('constructionData');
+            const savedInspection = localStorage.getItem('inspectionData');
+            
+            if (savedConstruction) {
+                constructionData = JSON.parse(savedConstruction);
+            }
+            if (savedInspection) {
+                inspectionData = JSON.parse(savedInspection);
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('constructionData', JSON.stringify(constructionData));
+            localStorage.setItem('inspectionData', JSON.stringify(inspectionData));
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            
+            document.getElementById('construction-toolbar').style.display = tab === 'construction' ? 'flex' : 'none';
+            document.getElementById('inspection-toolbar').style.display = tab === 'inspection' ? 'flex' : 'none';
+            document.getElementById('construction-table-container').style.display = tab === 'construction' ? 'block' : 'none';
+            document.getElementById('inspection-table-container').style.display = tab === 'inspection' ? 'block' : 'none';
+            document.getElementById('construction-pagination').style.display = tab === 'construction' ? 'flex' : 'none';
+            document.getElementById('inspection-pagination').style.display = tab === 'inspection' ? 'flex' : 'none';
+            
+            filterData();
+        }
+
+        function updateStats() {
+            document.getElementById('construction-count').textContent = constructionData.length;
+            document.getElementById('inspection-count').textContent = inspectionData.length;
+            document.getElementById('stat-total').textContent = constructionData.length;
+            document.getElementById('stat-pipe').textContent = constructionData.filter(c => c.constructionType === '管道').length;
+            document.getElementById('stat-other').textContent = constructionData.filter(c => c.constructionType === '其他').length;
+            document.getElementById('stat-normal').textContent = inspectionData.filter(i => i.result === '正常').length;
+            document.getElementById('stat-rectify').textContent = inspectionData.filter(i => i.result === '需整改').length;
+        }
+
+        function updateProjectFilter() {
+            const select = document.getElementById('inspection-project-filter');
+            const modalSelect = document.getElementById('related-project');
+            
+            const options = '<option value="">全部</option>' + 
+                constructionData.map(c => `<option value="${c.id}">${c.merchantName} - ${c.location}</option>`).join('');
+            
+            select.innerHTML = options;
+            modalSelect.innerHTML = '<option value="">请选择施工项目</option>' + 
+                constructionData.map(c => `<option value="${c.id}">${c.merchantName} - ${c.location}</option>`).join('');
+        }
+
+        function getInspectionCount(constructionId) {
+            return inspectionData.filter(i => i.relatedProjectId === constructionId).length;
+        }
+
+        function renderConstructionTable() {
+            const tbody = document.getElementById('construction-tbody');
+            const searchTerm = document.getElementById('construction-search').value.toLowerCase();
+            const typeFilter = document.getElementById('construction-type-filter').value;
+            
+            let filteredData = constructionData.filter(item => {
+                const matchSearch = item.location.toLowerCase().includes(searchTerm) || 
+                                   item.merchantName.toLowerCase().includes(searchTerm);
+                const matchType = !typeFilter || item.constructionType === typeFilter;
+                return matchSearch && matchType;
+            });
+            
+            filteredData = sortData(filteredData, 'construction');
+            
+            const totalPages = Math.ceil(filteredData.length / pageSize);
+            const startIndex = (currentPage.construction - 1) * pageSize;
+            const pageData = filteredData.slice(startIndex, startIndex + pageSize);
+            
+            if (pageData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📭</div>
+                                <div class="empty-state-text">暂无施工项目数据</div>
+                                <button class="btn btn-primary" onclick="openConstructionModal()">新增施工项目</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = pageData.map((item, index) => `
+                    <tr>
+                        <td>${startIndex + index + 1}</td>
+                        <td>${item.location}</td>
+                        <td>${item.merchantName}</td>
+                        <td>${item.constructionDate}</td>
+                        <td><span class="type-badge type-${item.constructionType === '管道' ? 'pipe' : 'other'}">${item.constructionType}</span></td>
+                        <td>${item.files ? item.files.length : 0} 个文件</td>
+                        <td>
+                            <button class="action-btn action-btn-view" onclick="viewRelatedInspections('${item.id}')">
+                                ${getInspectionCount(item.id)} 次
+                            </button>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn action-btn-view" onclick="viewConstruction('${item.id}')">查看</button>
+                                <button class="action-btn action-btn-edit" onclick="editConstruction('${item.id}')">编辑</button>
+                                <button class="action-btn action-btn-delete" onclick="deleteConstruction('${item.id}')">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            renderPagination('construction', totalPages);
+        }
+
+        function renderInspectionTable() {
+            const tbody = document.getElementById('inspection-tbody');
+            const searchTerm = document.getElementById('inspection-search').value.toLowerCase();
+            const resultFilter = document.getElementById('inspection-result-filter').value;
+            const projectFilter = document.getElementById('inspection-project-filter').value;
+            
+            let filteredData = inspectionData.filter(item => {
+                const matchSearch = item.inspector.toLowerCase().includes(searchTerm);
+                const matchResult = !resultFilter || item.result === resultFilter;
+                const matchProject = !projectFilter || item.relatedProjectId === projectFilter;
+                return matchSearch && matchResult && matchProject;
+            });
+            
+            filteredData = sortData(filteredData, 'inspection');
+            
+            const totalPages = Math.ceil(filteredData.length / pageSize);
+            const startIndex = (currentPage.inspection - 1) * pageSize;
+            const pageData = filteredData.slice(startIndex, startIndex + pageSize);
+            
+            if (pageData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📋</div>
+                                <div class="empty-state-text">暂无巡查记录数据</div>
+                                <button class="btn btn-primary" onclick="openInspectionModal()">新增巡查记录</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = pageData.map((item, index) => {
+                    const project = constructionData.find(c => c.id === item.relatedProjectId);
+                    return `
+                        <tr>
+                            <td>${startIndex + index + 1}</td>
+                            <td>${item.inspectionDate}</td>
+                            <td>${item.inspector}</td>
+                            <td>${project ? project.merchantName : '未知项目'}</td>
+                            <td><span class="status-badge status-${item.result === '正常' ? 'normal' : item.result === '异常' ? 'abnormal' : 'rectify'}">${item.result}</span></td>
+                            <td>${item.photos ? item.photos.length : 0} 张照片</td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="action-btn action-btn-view" onclick="viewInspection('${item.id}')">查看</button>
+                                    <button class="action-btn action-btn-edit" onclick="editInspection('${item.id}')">编辑</button>
+                                    <button class="action-btn action-btn-delete" onclick="deleteInspection('${item.id}')">删除</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `}).join('');
+            }
+            
+            renderPagination('inspection', totalPages);
+        }
+
+        function sortData(data, type) {
+            const sort = currentSort;
+            return data.sort((a, b) => {
+                let aVal = a[sort.field];
+                let bVal = b[sort.field];
+                
+                if (sort.field === 'inspectionCount') {
+                    aVal = getInspectionCount(a.id);
+                    bVal = getInspectionCount(b.id);
+                } else if (sort.field === 'relatedProject') {
+                    const projA = constructionData.find(c => c.id === a.relatedProjectId);
+                    const projB = constructionData.find(c => c.id === b.relatedProjectId);
+                    aVal = projA ? projA.merchantName : '';
+                    bVal = projB ? projB.merchantName : '';
+                }
+                
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+                
+                if (aVal < bVal) return sort.direction === 'asc' ? -1 : 1;
+                if (aVal > bVal) return sort.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function sortTable(type, field) {
+            if (currentSort.field === field) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.field = field;
+                currentSort.direction = 'asc';
+            }
+            
+            document.querySelectorAll('th').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+            });
+            
+            filterData();
+        }
+
+        function renderPagination(type, totalPages) {
+            const container = document.getElementById(`${type}-pagination`);
+            const currentPg = currentPage[type];
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = `<button onclick="changePage('${type}', ${currentPg - 1})" ${currentPg === 1 ? 'disabled' : ''}>上一页</button>`;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPg - 2 && i <= currentPg + 2)) {
+                    html += `<button class="${i === currentPg ? 'active' : ''}" onclick="changePage('${type}', ${i})">${i}</button>`;
+                } else if (i === currentPg - 3 || i === currentPg + 3) {
+                    html += '<span>...</span>';
+                }
+            }
+            
+            html += `<button onclick="changePage('${type}', ${currentPg + 1})" ${currentPg === totalPages ? 'disabled' : ''}>下一页</button>`;
+            
+            container.innerHTML = html;
+        }
+
+        function changePage(type, page) {
+            currentPage[type] = page;
+            filterData();
+        }
+
+        function filterData() {
+            if (currentTab === 'construction') {
+                renderConstructionTable();
+            } else {
+                renderInspectionTable();
+            }
+        }
+
+        function openConstructionModal(id = null) {
+            document.getElementById('construction-modal-title').textContent = id ? '编辑施工项目' : '新增施工项目';
+            document.getElementById('construction-id').value = id || '';
+            document.getElementById('construction-location').value = '';
+            document.getElementById('construction-merchant-name').value = '';
+            document.getElementById('construction-date').value = '';
+            document.querySelector('input[name="construction-type"][value="管道"]').checked = true;
+            document.getElementById('construction-file-list').innerHTML = '';
+            document.getElementById('map-picker').style.display = 'none';
+            tempFiles = [];
+            
+            if (id) {
+                const item = constructionData.find(c => c.id === id);
+                if (item) {
+                    document.getElementById('construction-location').value = item.location;
+                    document.getElementById('construction-merchant-name').value = item.merchantName;
+                    document.getElementById('construction-date').value = item.constructionDate;
+                    document.querySelector(`input[name="construction-type"][value="${item.constructionType}"]`).checked = true;
+                    tempFiles = item.files || [];
+                    renderFileList();
+                }
+            }
+            
+            document.getElementById('construction-modal').classList.add('active');
+        }
+
+        function openInspectionModal(id = null) {
+            document.getElementById('inspection-modal-title').textContent = id ? '编辑巡查记录' : '新增巡查记录';
+            document.getElementById('inspection-id').value = id || '';
+            document.getElementById('inspection-date').value = '';
+            document.getElementById('inspector').value = '';
+            document.getElementById('related-project').value = '';
+            document.querySelector('input[name="inspection-result"][value="正常"]').checked = true;
+            document.getElementById('inspection-photo-preview').innerHTML = '';
+            tempPhotos = [];
+            
+            if (id) {
+                const item = inspectionData.find(i => i.id === id);
+                if (item) {
+                    document.getElementById('inspection-date').value = item.inspectionDate;
+                    document.getElementById('inspector').value = item.inspector;
+                    document.getElementById('related-project').value = item.relatedProjectId;
+                    document.querySelector(`input[name="inspection-result"][value="${item.result}"]`).checked = true;
+                    tempPhotos = item.photos || [];
+                    renderPhotoPreview();
+                }
+            }
+            
+            updateProjectFilter();
+            document.getElementById('inspection-modal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        function setupFileHandlers() {
+            document.getElementById('construction-files').addEventListener('change', handleFileSelect);
+            document.getElementById('inspection-photos').addEventListener('change', handlePhotoSelect);
+        }
+
+        function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                if (file.size > 10 * 1024 * 1024) {
+                    showToast('文件大小不能超过10MB', 'error');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempFiles.push({
+                        name: file.name,
+                        data: e.target.result,
+                        size: file.size
+                    });
+                    renderFileList();
+                };
+                reader.readAsDataURL(file);
+            });
+            e.target.value = '';
+        }
+
+        function handlePhotoSelect(e) {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('图片大小不能超过5MB', 'error');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempPhotos.push({
+                        name: file.name,
+                        data: e.target.result,
+                        size: file.size
+                    });
+                    renderPhotoPreview();
+                };
+                reader.readAsDataURL(file);
+            });
+            e.target.value = '';
+        }
+
+        function renderFileList() {
+            const container = document.getElementById('construction-file-list');
+            container.innerHTML = tempFiles.map((file, index) => `
+                <div class="file-item">
+                    📄 ${file.name}
+                    <span class="remove-file" onclick="removeFile(${index})">×</span>
+                </div>
+            `).join('');
+        }
+
+        function renderPhotoPreview() {
+            const container = document.getElementById('inspection-photo-preview');
+            container.innerHTML = tempPhotos.map((photo, index) => `
+                <div class="image-preview-item">
+                    <img src="${photo.data}" alt="${photo.name}">
+                    <button class="remove-image" onclick="removePhoto(${index})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function removeFile(index) {
+            tempFiles.splice(index, 1);
+            renderFileList();
+        }
+
+        function removePhoto(index) {
+            tempPhotos.splice(index, 1);
+            renderPhotoPreview();
+        }
+
+        function openMapPicker() {
+            const mapPicker = document.getElementById('map-picker');
+            mapPicker.style.display = mapPicker.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function confirmLocation() {
+            const lat = document.getElementById('map-lat').value;
+            const lng = document.getElementById('map-lng').value;
+            if (lat && lng) {
+                document.getElementById('construction-location').value = `纬度: ${lat}, 经度: ${lng}`;
+                document.getElementById('map-picker').style.display = 'none';
+                showToast('位置已设置');
+            } else {
+                showToast('请输入经纬度坐标', 'error');
+            }
+        }
+
+        function saveConstruction() {
+            const id = document.getElementById('construction-id').value;
+            const location = document.getElementById('construction-location').value.trim();
+            const merchantName = document.getElementById('construction-merchant-name').value.trim();
+            const constructionDate = document.getElementById('construction-date').value;
+            const constructionType = document.querySelector('input[name="construction-type"]:checked').value;
+            
+            if (!location || !merchantName || !constructionDate) {
+                showToast('请填写所有必填项', 'error');
+                return;
+            }
+            
+            const data = {
+                id: id || generateId(),
+                location,
+                merchantName,
+                constructionDate,
+                constructionType,
+                files: tempFiles,
+                createdAt: id ? constructionData.find(c => c.id === id)?.createdAt : new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            if (id) {
+                const index = constructionData.findIndex(c => c.id === id);
+                constructionData[index] = data;
+                showToast('施工项目更新成功');
+            } else {
+                constructionData.push(data);
+                showToast('施工项目添加成功');
+            }
+            
+            saveData();
+            tempFiles = [];
+            closeModal('construction-modal');
+            renderConstructionTable();
+            updateStats();
+            updateProjectFilter();
+        }
+
+        function saveInspection() {
+            const id = document.getElementById('inspection-id').value;
+            const inspectionDate = document.getElementById('inspection-date').value;
+            const inspector = document.getElementById('inspector').value.trim();
+            const relatedProjectId = document.getElementById('related-project').value;
+            const result = document.querySelector('input[name="inspection-result"]:checked').value;
+            
+            if (!inspectionDate || !inspector || !relatedProjectId) {
+                showToast('请填写所有必填项', 'error');
+                return;
+            }
+            
+            const data = {
+                id: id || generateId(),
+                inspectionDate,
+                inspector,
+                relatedProjectId,
+                result,
+                photos: tempPhotos,
+                createdAt: id ? inspectionData.find(i => i.id === id)?.createdAt : new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            if (id) {
+                const index = inspectionData.findIndex(i => i.id === id);
+                inspectionData[index] = data;
+                showToast('巡查记录更新成功');
+            } else {
+                inspectionData.push(data);
+                showToast('巡查记录添加成功');
+            }
+            
+            saveData();
+            tempPhotos = [];
+            closeModal('inspection-modal');
+            renderInspectionTable();
+            renderConstructionTable();
+            updateStats();
+        }
+
+        function editConstruction(id) {
+            openConstructionModal(id);
+        }
+
+        function editInspection(id) {
+            openInspectionModal(id);
+        }
+
+        function viewConstruction(id) {
+            const item = constructionData.find(c => c.id === id);
+            if (!item) return;
+            
+            const relatedInspections = inspectionData.filter(i => i.relatedProjectId === id);
+            
+            document.getElementById('detail-modal-title').textContent = '施工项目详情';
+            document.getElementById('detail-content').innerHTML = `
+                <div class="detail-view">
+                    <div class="detail-section">
+                        <h3>基本信息</h3>
+                        <div class="detail-row">
+                            <div class="detail-label">定位:</div>
+                            <div class="detail-value">${item.location}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">商户名称:</div>
+                            <div class="detail-value">${item.merchantName}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">施工时间:</div>
+                            <div class="detail-value">${item.constructionDate}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">施工类型:</div>
+                            <div class="detail-value">
+                                <span class="type-badge type-${item.constructionType === '管道' ? 'pipe' : 'other'}">${item.constructionType}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${item.files && item.files.length > 0 ? `
+                        <div class="detail-section">
+                            <h3>施工文件</h3>
+                            <div class="file-download-list">
+                                ${item.files.map(file => `
+                                    <div class="file-download-item">
+                                        📄 ${file.name}
+                                        <a href="${file.data}" download="${file.name}">下载</a>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="detail-section">
+                        <h3>关联巡查记录 (${relatedInspections.length})</h3>
+                        ${relatedInspections.length > 0 ? relatedInspections.map(insp => `
+                            <div class="related-item">
+                                <div>
+                                    <strong>${insp.inspectionDate}</strong> - ${insp.inspector}
+                                    <span class="status-badge status-${insp.result === '正常' ? 'normal' : insp.result === '异常' ? 'abnormal' : 'rectify'}">${insp.result}</span>
+                                </div>
+                                <button class="action-btn action-btn-view" onclick="viewInspection('${insp.id}'); closeModal('detail-modal');">查看</button>
+                            </div>
+                        `).join('') : '<p style="color: #6c757d;">暂无关联巡查记录</p>'}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('detail-modal').classList.add('active');
+        }
+
+        function viewInspection(id) {
+            const item = inspectionData.find(i => i.id === id);
+            if (!item) return;
+            
+            const project = constructionData.find(c => c.id === item.relatedProjectId);
+            
+            document.getElementById('detail-modal-title').textContent = '巡查记录详情';
+            document.getElementById('detail-content').innerHTML = `
+                <div class="detail-view">
+                    <div class="detail-section">
+                        <h3>基本信息</h3>
+                        <div class="detail-row">
+                            <div class="detail-label">巡查日期:</div>
+                            <div class="detail-value">${item.inspectionDate}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">巡查人:</div>
+                            <div class="detail-value">${item.inspector}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">关联项目:</div>
+                            <div class="detail-value">${project ? project.merchantName : '未知项目'}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">巡查结果:</div>
+                            <div class="detail-value">
+                                <span class="status-badge status-${item.result === '正常' ? 'normal' : item.result === '异常' ? 'abnormal' : 'rectify'}">${item.result}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${item.photos && item.photos.length > 0 ? `
+                        <div class="detail-section">
+                            <h3>巡查照片 (${item.photos.length})</h3>
+                            <div class="photo-gallery">
+                                ${item.photos.map(photo => `
+                                    <img src="${photo.data}" alt="${photo.name}" onclick="window.open('${photo.data}', '_blank')">
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            document.getElementById('detail-modal').classList.add('active');
+        }
+
+        function viewRelatedInspections(constructionId) {
+            const project = constructionData.find(c => c.id === constructionId);
+            const relatedInspections = inspectionData.filter(i => i.relatedProjectId === constructionId);
+            
+            document.getElementById('related-inspections-content').innerHTML = `
+                <div style="margin-bottom: 16px;">
+                    <strong>施工项目:</strong> ${project ? project.merchantName : '未知项目'}<br>
+                    <strong>定位:</strong> ${project ? project.location : '-'}
+                </div>
+                ${relatedInspections.length > 0 ? relatedInspections.map(insp => `
+                    <div class="related-item">
+                        <div>
+                            <strong>${insp.inspectionDate}</strong> - ${insp.inspector}
+                            <span class="status-badge status-${insp.result === '正常' ? 'normal' : insp.result === '异常' ? 'abnormal' : 'rectify'}">${insp.result}</span>
+                        </div>
+                        <button class="action-btn action-btn-view" onclick="closeModal('related-inspections-modal'); viewInspection('${insp.id}');">查看详情</button>
+                    </div>
+                `).join('') : '<p style="color: #6c757d; text-align: center; padding: 20px;">暂无关联巡查记录</p>'}
+            `;
+            
+            document.getElementById('related-inspections-modal').classList.add('active');
+        }
+
+        function deleteConstruction(id) {
+            if (!confirm('确定要删除此施工项目吗？关联的巡查记录也将被删除。')) return;
+            
+            constructionData = constructionData.filter(c => c.id !== id);
+            inspectionData = inspectionData.filter(i => i.relatedProjectId !== id);
+            
+            saveData();
+            renderConstructionTable();
+            renderInspectionTable();
+            updateStats();
+            updateProjectFilter();
+            showToast('施工项目已删除');
+        }
+
+        function deleteInspection(id) {
+            if (!confirm('确定要删除此巡查记录吗？')) return;
+            
+            inspectionData = inspectionData.filter(i => i.id !== id);
+            
+            saveData();
+            renderInspectionTable();
+            renderConstructionTable();
+            updateStats();
+            showToast('巡查记录已删除');
+        }
+
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+            
+            const constructionExport = constructionData.map((item, index) => ({
+                '序号': index + 1,
+                '定位': item.location,
+                '商户名称': item.merchantName,
+                '施工时间': item.constructionDate,
+                '施工类型': item.constructionType,
+                '文件数量': item.files ? item.files.length : 0,
+                '巡查次数': getInspectionCount(item.id),
+                '创建时间': new Date(item.createdAt).toLocaleString(),
+                '更新时间': new Date(item.updatedAt).toLocaleString()
+            }));
+            
+            const ws1 = XLSX.utils.json_to_sheet(constructionExport);
+            XLSX.utils.book_append_sheet(wb, ws1, '施工管理表');
+            
+            const inspectionExport = inspectionData.map((item, index) => {
+                const project = constructionData.find(c => c.id === item.relatedProjectId);
+                return {
+                    '序号': index + 1,
+                    '巡查日期': item.inspectionDate,
+                    '巡查人': item.inspector,
+                    '关联施工项目': project ? project.merchantName : '未知',
+                    '巡查结果': item.result,
+                    '照片数量': item.photos ? item.photos.length : 0,
+                    '创建时间': new Date(item.createdAt).toLocaleString(),
+                    '更新时间': new Date(item.updatedAt).toLocaleString()
+                };
+            });
+            
+            const ws2 = XLSX.utils.json_to_sheet(inspectionExport);
+            XLSX.utils.book_append_sheet(wb, ws2, '巡查记录表');
+            
+            const fileName = `施工巡查管理系统_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            showToast('数据导出成功');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `${type === 'success' ? '✅' : '❌'} ${message}`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+        
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
