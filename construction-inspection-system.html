@@ -12,24 +12,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --bg-deep: #0b1120;
-            --bg-card: #131e30;
-            --bg-panel: #1a2a40;
-            --bg-input: #0f1c2d;
-            --border: #243447;
-            --border-light: #2d4060;
-            --accent: #f5a623;
-            --accent-dim: rgba(245, 166, 35, 0.15);
-            --accent-glow: rgba(245, 166, 35, 0.3);
-            --text-primary: #e8edf5;
-            --text-secondary: #7a90a8;
-            --text-muted: #4a607a;
-            --green: #2ecc71;
-            --red: #e74c3c;
-            --amber: #f39c12;
-            --blue: #3498db;
+            --bg-deep: #f5f6f8;
+            --bg-card: #ffffff;
+            --bg-panel: #fafbfc;
+            --bg-input: #f5f6f8;
+            --border: #e5e7eb;
+            --border-light: #d1d5db;
+            --accent: #4a7dff;
+            --accent-dim: rgba(74, 125, 255, 0.07);
+            --accent-glow: rgba(74, 125, 255, 0.18);
+            --text-primary: #1a1a2e;
+            --text-secondary: #5a6072;
+            --text-muted: #9098a9;
+            --green: #16a34a;
+            --red: #dc2626;
+            --amber: #d97706;
+            --blue: #4a7dff;
             --radius: 8px;
-            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
         }
 
         *,
@@ -51,8 +51,8 @@
 
         /* ── HEADER ── */
         .app-header {
-            background: linear-gradient(135deg, #0f1c2d 0%, #1a2a40 100%);
-            border-bottom: 2px solid var(--accent);
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
             padding: 0 24px;
             height: 64px;
             display: flex;
@@ -61,7 +61,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         }
 
         .logo {
@@ -164,7 +164,7 @@
 
         .tab-btn.active {
             background: var(--accent);
-            color: #000;
+            color: #fff;
             font-weight: 700;
         }
 
@@ -177,8 +177,8 @@
         }
 
         .tab-btn.active .tab-badge {
-            background: rgba(0, 0, 0, 0.3);
-            color: #000;
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
         }
 
         /* ── TOOLBAR ── */
@@ -207,12 +207,12 @@
 
         .btn-primary {
             background: var(--accent);
-            color: #000;
+            color: #fff;
             font-weight: 700;
         }
 
         .btn-primary:hover {
-            background: #e09510;
+            background: #3a6ae0;
             transform: translateY(-1px);
             box-shadow: 0 4px 12px var(--accent-glow);
         }
@@ -362,7 +362,7 @@
         }
 
         .data-table tbody tr:hover {
-            background: rgba(245, 166, 35, 0.04);
+            background: rgba(74, 125, 255, 0.04);
         }
 
         .data-table tbody tr:last-child td {
@@ -400,27 +400,27 @@
         }
 
         .tag-normal {
-            background: rgba(46, 204, 113, 0.15);
+            background: rgba(22, 163, 74, 0.08);
             color: var(--green);
-            border: 1px solid rgba(46, 204, 113, 0.3);
+            border: 1px solid rgba(22, 163, 74, 0.2);
         }
 
         .tag-abnormal {
-            background: rgba(231, 76, 60, 0.15);
+            background: rgba(220, 38, 38, 0.08);
             color: var(--red);
-            border: 1px solid rgba(231, 76, 60, 0.3);
+            border: 1px solid rgba(220, 38, 38, 0.2);
         }
 
         .tag-fix {
-            background: rgba(243, 156, 18, 0.15);
+            background: rgba(217, 119, 6, 0.08);
             color: var(--amber);
-            border: 1px solid rgba(243, 156, 18, 0.3);
+            border: 1px solid rgba(217, 119, 6, 0.2);
         }
 
         .tag-pipe {
-            background: rgba(52, 152, 219, 0.15);
+            background: rgba(74, 125, 255, 0.08);
             color: var(--blue);
-            border: 1px solid rgba(52, 152, 219, 0.3);
+            border: 1px solid rgba(74, 125, 255, 0.2);
         }
 
         .tag-other {
@@ -446,7 +446,7 @@
 
         .link-badge:hover {
             background: var(--accent);
-            color: #000;
+            color: #fff;
         }
 
         /* ── ACTION BUTTONS ── */
@@ -460,12 +460,12 @@
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.35);
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(2px);
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s;
@@ -484,7 +484,7 @@
             max-width: 640px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
             transform: translateY(20px);
             transition: transform 0.2s;
         }
@@ -841,7 +841,7 @@
         }
 
         .related-table tbody tr:hover {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(74, 125, 255, 0.04);
         }
 
         /* ── PAGINATION ── */
@@ -883,7 +883,7 @@
 
         .page-btn.active {
             background: var(--accent);
-            color: #000;
+            color: #fff;
             border-color: var(--accent);
             font-weight: 700;
         }
@@ -917,19 +917,19 @@
         }
 
         .toast-success {
-            background: #0f2a1a;
+            background: #f0fdf4;
             border: 1px solid var(--green);
             color: var(--green);
         }
 
         .toast-error {
-            background: #2a0f0f;
+            background: #fef2f2;
             border: 1px solid var(--red);
             color: var(--red);
         }
 
         .toast-info {
-            background: #0f1e2a;
+            background: #eff6ff;
             border: 1px solid var(--blue);
             color: var(--blue);
         }
@@ -1484,6 +1484,65 @@
 
     <script>
         // ================================================================
+        // INDEXEDDB FILE STORE (persistent file/photo storage)
+        // ================================================================
+        const FileStore = {
+            db: null,
+            DB_NAME: 'cims_filestore',
+            STORE_NAME: 'files',
+            init() {
+                return new Promise((resolve, reject) => {
+                    const req = indexedDB.open(this.DB_NAME, 1);
+                    req.onupgradeneeded = e => { e.target.result.createObjectStore(this.STORE_NAME); };
+                    req.onsuccess = e => { this.db = e.target.result; resolve(); };
+                    req.onerror = e => { console.error('IndexedDB init failed', e); resolve(); };
+                });
+            },
+            _tx(mode) {
+                if (!this.db) return null;
+                return this.db.transaction(this.STORE_NAME, mode).objectStore(this.STORE_NAME);
+            },
+            put(key, value) {
+                return new Promise((resolve, reject) => {
+                    const store = this._tx('readwrite');
+                    if (!store) return resolve();
+                    const req = store.put(value, key);
+                    req.onsuccess = () => resolve();
+                    req.onerror = e => { console.error('IndexedDB put error', e); resolve(); };
+                });
+            },
+            get(key) {
+                return new Promise((resolve, reject) => {
+                    const store = this._tx('readonly');
+                    if (!store) return resolve(null);
+                    const req = store.get(key);
+                    req.onsuccess = () => resolve(req.result || null);
+                    req.onerror = e => { console.error('IndexedDB get error', e); resolve(null); };
+                });
+            },
+            del(key) {
+                return new Promise((resolve, reject) => {
+                    const store = this._tx('readwrite');
+                    if (!store) return resolve();
+                    const req = store.delete(key);
+                    req.onsuccess = () => resolve();
+                    req.onerror = () => resolve();
+                });
+            },
+            async saveRecord(type, id, files) {
+                const data = (files || []).filter(f => f.dataUrl).map(f => ({ name: f.name, size: f.size, dataUrl: f.dataUrl }));
+                if (data.length) { await this.put(`${type}_${id}`, data); }
+                else { await this.del(`${type}_${id}`); }
+            },
+            async loadRecord(type, id) {
+                return (await this.get(`${type}_${id}`)) || [];
+            },
+            async deleteRecord(type, id) {
+                await this.del(`${type}_${id}`);
+            }
+        };
+
+        // ================================================================
         // DATA STORE
         // ================================================================
         const DB = {
@@ -1491,17 +1550,15 @@
                 this.projectsA = JSON.parse(localStorage.getItem('cims_projects') || '[]');
                 this.inspectionsB = JSON.parse(localStorage.getItem('cims_inspections') || '[]');
             },
-            // Strip base64 dataUrl before saving — only keep name/size metadata
-            // This prevents QuotaExceededError (localStorage limit ~5MB)
             save() {
                 try {
                     const projStrip = this.projectsA.map(r => ({
                         ...r,
-                        files: (r.files || []).map(f => ({ name: f.name, size: f.size, session: f.session }))
+                        files: (r.files || []).map(f => ({ name: f.name, size: f.size }))
                     }));
                     const inspStrip = this.inspectionsB.map(r => ({
                         ...r,
-                        photos: (r.photos || []).map(p => ({ name: p.name, size: p.size, session: p.session }))
+                        photos: (r.photos || []).map(p => ({ name: p.name, size: p.size }))
                     }));
                     localStorage.setItem('cims_projects', JSON.stringify(projStrip));
                     localStorage.setItem('cims_inspections', JSON.stringify(inspStrip));
@@ -1522,12 +1579,10 @@
         let sortState = { A: { field: 'constructDate', dir: -1 }, B: { field: 'inspectDate', dir: -1 } };
         let pageState = { A: 1, B: 1 };
         const PAGE_SIZE = 10;
-        let tempFilesA = []; // {name, size, dataUrl?}
-        let tempPhotosB = []; // {name, size, dataUrl}
+        let tempFilesA = [];
+        let tempPhotosB = [];
         let confirmCallback = null;
         let editingDetailId = { A: null, B: null };
-        // Session-only photo cache keyed by inspection record ID
-        const sessionPhotoCache = {};
 
         // ================================================================
         // INIT
@@ -1537,6 +1592,30 @@
         renderA();
         renderB();
         updateProjectSelect();
+
+        // Restore file/photo data from IndexedDB after initial render
+        FileStore.init().then(async () => {
+            for (const r of DB.projectsA) {
+                const stored = await FileStore.loadRecord('A', r.id);
+                if (stored.length && r.files) {
+                    r.files.forEach(f => {
+                        const match = stored.find(s => s.name === f.name && s.size === f.size);
+                        if (match) f.dataUrl = match.dataUrl;
+                    });
+                }
+            }
+            for (const r of DB.inspectionsB) {
+                const stored = await FileStore.loadRecord('B', r.id);
+                if (stored.length && r.photos) {
+                    r.photos.forEach(p => {
+                        const match = stored.find(s => s.name === p.name && s.size === p.size);
+                        if (match) p.dataUrl = match.dataUrl;
+                    });
+                }
+            }
+            renderA();
+            renderB();
+        });
 
         // ================================================================
         // TAB SWITCHING
@@ -1657,26 +1736,19 @@
                     const tagCls = resultTagMap[r.result] || 'other';
                     let photoCell = '—';
                     if (r.photos && r.photos.length) {
-                        // Prefer sessionPhotoCache (has dataUrl) over DB record (dataUrl stripped after reload)
-                        const cachedPhotos = sessionPhotoCache[r.id] || [];
-                        const displayPhotos = r.photos.map((p, i) => {
-                            const cached = cachedPhotos[i];
-                            return cached && cached.dataUrl ? { ...p, dataUrl: cached.dataUrl } : p;
-                        });
-                        const hasAnyDataUrl = displayPhotos.some(p => p.dataUrl);
-                        const thumbs = displayPhotos.map((p, i) => p.dataUrl
+                        const thumbs = r.photos.map((p, i) => p.dataUrl
                             ? `<img src="${p.dataUrl}" onclick="event.stopPropagation();openLightbox(${r.id},${i})" style="width:36px;height:36px;object-fit:cover;border-radius:4px;border:1px solid var(--border);cursor:pointer;transition:transform 0.15s" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" title="${p.name}">`
                             : `<span title="${p.name}" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--bg-panel);border:1px solid var(--border);border-radius:4px;font-size:16px;cursor:default">📷</span>`
                         ).join('');
                         photoCell = `<div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">${thumbs}</div>`;
                     }
-                    return `<tr>
+                    return `<tr onclick="showDetailB(${r.id})">
         <td>${(r.inspectDate || '—').replace('T', ' ')}</td>
         <td>👤 ${r.inspector || '—'}</td>
-        <td>${photoCell}</td>
-        <td>${r.projectId ? `<span class="link-badge" onclick="viewProjectDetail(${r.projectId})">🏗️ ${pName}</span>` : '<span style="color:var(--text-muted)">未关联</span>'}</td>
+        <td onclick="event.stopPropagation()">${photoCell}</td>
+        <td onclick="event.stopPropagation()">${r.projectId ? `<span class="link-badge" onclick="viewProjectDetail(${r.projectId})">🏗️ ${pName}</span>` : '<span style="color:var(--text-muted)">未关联</span>'}</td>
         <td>${r.result ? `<span class="tag tag-${tagCls}">${r.result}</span>` : '—'}</td>
-        <td>
+        <td onclick="event.stopPropagation()">
           <div class="action-cell">
             <button class="btn btn-secondary btn-sm" onclick="openModal('B', ${r.id})">✏️ 编辑</button>
             <button class="btn btn-danger btn-sm" onclick="deleteRecord('B', ${r.id})">🗑️</button>
@@ -1963,13 +2035,17 @@
                 if (!constructType) { toast('error', '请选择施工类型'); return; }
 
                 const idVal = document.getElementById('fA-id').value;
+                let recordId;
                 if (idVal) {
+                    recordId = Number(idVal);
                     const idx = DB.projectsA.findIndex(a => a.id == idVal);
                     if (idx >= 0) Object.assign(DB.projectsA[idx], { location, merchantName, constructDate, constructType, lng, lat, files: [...tempFilesA] });
                 } else {
-                    DB.projectsA.push({ id: DB.nextId(DB.projectsA), location, merchantName, constructDate, constructType, lng, lat, files: [...tempFilesA], createdAt: new Date().toISOString() });
+                    recordId = DB.nextId(DB.projectsA);
+                    DB.projectsA.push({ id: recordId, location, merchantName, constructDate, constructType, lng, lat, files: [...tempFilesA], createdAt: new Date().toISOString() });
                 }
                 DB.save();
+                FileStore.saveRecord('A', recordId, tempFilesA);
                 closeModal('A');
                 updateStats();
                 updateProjectSelect();
@@ -1988,18 +2064,19 @@
                 if (!result) { toast('error', '请选择巡查结果'); return; }
 
                 const idVal = document.getElementById('fB-id').value;
+                let recordId;
                 if (idVal) {
+                    recordId = Number(idVal);
                     const idx = DB.inspectionsB.findIndex(b => b.id == idVal);
                     if (idx >= 0) {
                         Object.assign(DB.inspectionsB[idx], { inspectDate, inspector, projectId: Number(projectId), result, photos: [...tempPhotosB] });
-                        sessionPhotoCache[Number(idVal)] = tempPhotosB.filter(p => p.dataUrl).map(p => ({ name: p.name, size: p.size, dataUrl: p.dataUrl }));
                     }
                 } else {
-                    const newId = DB.nextId(DB.inspectionsB);
-                    DB.inspectionsB.push({ id: newId, inspectDate, inspector, projectId: Number(projectId), result, photos: [...tempPhotosB], createdAt: new Date().toISOString() });
-                    sessionPhotoCache[newId] = tempPhotosB.filter(p => p.dataUrl).map(p => ({ name: p.name, size: p.size, dataUrl: p.dataUrl }));
+                    recordId = DB.nextId(DB.inspectionsB);
+                    DB.inspectionsB.push({ id: recordId, inspectDate, inspector, projectId: Number(projectId), result, photos: [...tempPhotosB], createdAt: new Date().toISOString() });
                 }
                 DB.save();
+                FileStore.saveRecord('B', recordId, tempPhotosB);
                 closeModal('B');
                 updateStats();
                 pageState.B = 1;
@@ -2022,8 +2099,10 @@
             document.getElementById('confirm-ok-btn').onclick = () => {
                 if (isA) {
                     DB.projectsA = DB.projectsA.filter(r => r.id !== id);
+                    FileStore.deleteRecord('A', id);
                 } else {
                     DB.inspectionsB = DB.inspectionsB.filter(r => r.id !== id);
+                    FileStore.deleteRecord('B', id);
                 }
                 DB.save();
                 closeConfirm();
@@ -2073,7 +2152,7 @@
           <span>📄</span>
           <span class="file-item-name">${f.name}</span>
           <span class="file-item-size">${formatSize(f.size)}</span>
-          ${f.dataUrl ? `<a href="${f.dataUrl}" download="${f.name}" class="btn btn-secondary btn-sm">⬇</a>` : ''}
+          ${f.dataUrl ? `<a href="${f.dataUrl}" target="_blank" class="btn btn-secondary btn-sm" title="查看文件">👁</a><a href="${f.dataUrl}" download="${f.name}" class="btn btn-secondary btn-sm" title="下载文件">⬇</a>` : '<span style="font-size:11px;color:var(--text-muted)">无预览</span>'}
         </div>`).join('')}
       </div>
     </div>` : ''}
@@ -2138,9 +2217,12 @@
     ${r.photos && r.photos.length ? `
     <div class="detail-section">
       <div class="detail-section-title">📷 巡查照片 (${r.photos.length})</div>
-      <div class="img-preview-list">${r.photos.map(p => `
-        <div class="img-preview-item" style="width:100px;height:100px;cursor:pointer" onclick="window.open('${p.dataUrl}','_blank')">
+      <div class="img-preview-list">${r.photos.map((p, idx) => p.dataUrl ? `
+        <div class="img-preview-item" style="width:100px;height:100px;cursor:pointer" onclick="openLightbox(${r.id},${idx})">
           <img src="${p.dataUrl}" alt="${p.name}">
+        </div>` : `
+        <div class="img-preview-item" style="width:100px;height:100px;display:flex;align-items:center;justify-content:center;background:var(--bg-panel);font-size:12px;color:var(--text-muted);text-align:center;padding:4px" title="${p.name}">
+          📷<br>${p.name.length > 10 ? p.name.slice(0, 8) + '…' : p.name}
         </div>`).join('')}
       </div>
     </div>` : ''}`;
@@ -2256,16 +2338,11 @@
         let lbIndex = 0;
 
         function openLightbox(recordId, startIndex) {
-            // Merge sessionPhotoCache (has dataUrl) with DB record photos
             const r = DB.inspectionsB.find(b => b.id === recordId);
             if (!r || !r.photos || !r.photos.length) return;
-            const cached = sessionPhotoCache[recordId] || [];
-            lbPhotos = r.photos.map((p, i) => {
-                const c = cached[i];
-                return (c && c.dataUrl) ? { ...p, dataUrl: c.dataUrl } : p;
-            });
-            if (!lbPhotos.some(p => p.dataUrl)) {
-                toast('info', '照片仅在上传当次会话中可预览，刷新页面后需重新上传');
+            lbPhotos = r.photos.filter(p => p.dataUrl);
+            if (!lbPhotos.length) {
+                toast('info', '照片数据加载中，请稍后再试');
                 return;
             }
             lbIndex = startIndex || 0;
@@ -2299,7 +2376,7 @@
             document.getElementById('lb-next').style.display = lbPhotos.length > 1 ? 'flex' : 'none';
             const dots = document.getElementById('lb-dots');
             dots.innerHTML = lbPhotos.map((_, i) =>
-                `<div onclick="lbGoTo(${i})" style="width:8px;height:8px;border-radius:50%;background:${i === lbIndex ? '#f5a623' : 'rgba(255,255,255,0.3)'};cursor:pointer;transition:background 0.2s;"></div>`
+                `<div onclick="lbGoTo(${i})" style="width:8px;height:8px;border-radius:50%;background:${i === lbIndex ? '#4a7dff' : 'rgba(255,255,255,0.3)'};cursor:pointer;transition:background 0.2s;"></div>`
             ).join('');
         }
 
