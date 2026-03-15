@@ -10,26 +10,30 @@
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Barlow+Condensed:wght@400;600;700&display=swap"
         rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        window._AMapSecurityConfig = { securityJsCode: 'a28d547b3e33cddeb89f8eb6767d0a95' };
+    </script>
+    <script src="https://webapi.amap.com/maps?v=2.0&key=fa0e44c910d8a93e0cac4ff406c558a1&plugin=AMap.Geocoder,AMap.PlaceSearch"></script>
     <style>
         :root {
-            --bg-deep: #0b1120;
-            --bg-card: #131e30;
-            --bg-panel: #1a2a40;
-            --bg-input: #0f1c2d;
-            --border: #243447;
-            --border-light: #2d4060;
-            --accent: #f5a623;
-            --accent-dim: rgba(245, 166, 35, 0.15);
-            --accent-glow: rgba(245, 166, 35, 0.3);
-            --text-primary: #e8edf5;
-            --text-secondary: #7a90a8;
-            --text-muted: #4a607a;
-            --green: #2ecc71;
-            --red: #e74c3c;
-            --amber: #f39c12;
-            --blue: #3498db;
+            --bg-deep: #f0f2f5;
+            --bg-card: #ffffff;
+            --bg-panel: #f8f9fc;
+            --bg-input: #ffffff;
+            --border: #e2e8f0;
+            --border-light: #edf2f7;
+            --accent: #2563eb;
+            --accent-dim: rgba(37, 99, 235, 0.08);
+            --accent-glow: rgba(37, 99, 235, 0.2);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --green: #16a34a;
+            --red: #dc2626;
+            --amber: #d97706;
+            --blue: #2563eb;
             --radius: 8px;
-            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
         }
 
         *,
@@ -51,8 +55,8 @@
 
         /* ── HEADER ── */
         .app-header {
-            background: linear-gradient(135deg, #0f1c2d 0%, #1a2a40 100%);
-            border-bottom: 2px solid var(--accent);
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
             padding: 0 24px;
             height: 64px;
             display: flex;
@@ -61,7 +65,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
         }
 
         .logo {
@@ -164,12 +168,12 @@
 
         .tab-btn.active {
             background: var(--accent);
-            color: #000;
+            color: #ffffff;
             font-weight: 700;
         }
 
         .tab-badge {
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(0, 0, 0, 0.1);
             border-radius: 10px;
             padding: 1px 7px;
             font-size: 11px;
@@ -177,8 +181,8 @@
         }
 
         .tab-btn.active .tab-badge {
-            background: rgba(0, 0, 0, 0.3);
-            color: #000;
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
         }
 
         /* ── TOOLBAR ── */
@@ -207,12 +211,12 @@
 
         .btn-primary {
             background: var(--accent);
-            color: #000;
+            color: #ffffff;
             font-weight: 700;
         }
 
         .btn-primary:hover {
-            background: #e09510;
+            background: #1d4ed8;
             transform: translateY(-1px);
             box-shadow: 0 4px 12px var(--accent-glow);
         }
@@ -362,7 +366,7 @@
         }
 
         .data-table tbody tr:hover {
-            background: rgba(245, 166, 35, 0.04);
+            background: var(--accent-dim);
         }
 
         .data-table tbody tr:last-child td {
@@ -484,7 +488,7 @@
             max-width: 640px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
             transform: translateY(20px);
             transition: transform 0.2s;
         }
@@ -841,7 +845,7 @@
         }
 
         .related-table tbody tr:hover {
-            background: rgba(255, 255, 255, 0.03);
+            background: var(--accent-dim);
         }
 
         /* ── PAGINATION ── */
@@ -883,7 +887,7 @@
 
         .page-btn.active {
             background: var(--accent);
-            color: #000;
+            color: #ffffff;
             border-color: var(--accent);
             font-weight: 700;
         }
@@ -909,7 +913,7 @@
             border-radius: 8px;
             font-size: 13px;
             font-weight: 500;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
             animation: slideIn 0.3s ease;
             display: flex;
             align-items: center;
@@ -917,20 +921,20 @@
         }
 
         .toast-success {
-            background: #0f2a1a;
-            border: 1px solid var(--green);
+            background: #f0fdf4;
+            border: 1px solid #86efac;
             color: var(--green);
         }
 
         .toast-error {
-            background: #2a0f0f;
-            border: 1px solid var(--red);
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
             color: var(--red);
         }
 
         .toast-info {
-            background: #0f1e2a;
-            border: 1px solid var(--blue);
+            background: #eff6ff;
+            border: 1px solid #93c5fd;
             color: var(--blue);
         }
 
@@ -1412,36 +1416,35 @@
 
     <!-- ── MAP PICKER MODAL ── -->
     <div class="modal-overlay" id="modal-map">
-        <div class="modal" style="max-width:700px">
+        <div class="modal" style="max-width:760px">
             <div class="modal-header">
                 <div class="modal-title">地图选点</div>
                 <button class="modal-close" onclick="closeMapPicker()">✕</button>
             </div>
             <div class="modal-body">
-                <div class="map-frame-wrap" id="map-container">
-                    <div style="text-align:center">
-                        <div style="font-size:40px;margin-bottom:8px">🗺️</div>
-                        <div>请在下方输入坐标或地址</div>
-                        <div style="font-size:11px;margin-top:6px;color:var(--text-muted)">（可接入高德/百度地图 API 以启用交互式选点）
-                        </div>
-                    </div>
+                <div style="display:flex;gap:8px;margin-bottom:10px">
+                    <input class="form-input" id="map-search-input" placeholder="搜索地址..." style="flex:1">
+                    <button class="btn btn-primary btn-sm" onclick="mapSearch()">🔍 搜索</button>
                 </div>
+                <div id="amap-picker-container" style="width:100%;height:380px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:12px"></div>
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">地址描述</label>
-                        <input class="form-input" id="map-address" placeholder="例如：杭州市西湖区文三路100号">
+                        <input class="form-input" id="map-address" placeholder="点击地图或搜索以获取地址">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">提示</label>
-                        <div style="color:var(--text-muted);font-size:12px;padding-top:10px">
-                            可直接在主表单的坐标框中输入经纬度，或使用高德地图等工具获取坐标后填入。
+                        <label class="form-label">坐标</label>
+                        <div style="display:flex;gap:6px">
+                            <input class="form-input" id="map-lng" placeholder="经度" readonly style="flex:1">
+                            <input class="form-input" id="map-lat" placeholder="纬度" readonly style="flex:1">
                         </div>
                     </div>
                 </div>
+                <div style="font-size:12px;color:var(--text-muted)">💡 点击地图任意位置可选取坐标，也可搜索地址后选择</div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeMapPicker()">取消</button>
-                <button class="btn btn-primary" onclick="confirmMapAddress()">确认地址</button>
+                <button class="btn btn-primary" onclick="confirmMapAddress()">✓ 确认地址</button>
             </div>
         </div>
     </div>
@@ -1528,6 +1531,8 @@
         let editingDetailId = { A: null, B: null };
         // Session-only photo cache keyed by inspection record ID
         const sessionPhotoCache = {};
+        // Session-only file cache keyed by project ID
+        const sessionFileCache = {};
 
         // ================================================================
         // INIT
@@ -1966,8 +1971,11 @@
                 if (idVal) {
                     const idx = DB.projectsA.findIndex(a => a.id == idVal);
                     if (idx >= 0) Object.assign(DB.projectsA[idx], { location, merchantName, constructDate, constructType, lng, lat, files: [...tempFilesA] });
+                    sessionFileCache[Number(idVal)] = tempFilesA.filter(f => f.dataUrl).map(f => ({ name: f.name, size: f.size, dataUrl: f.dataUrl }));
                 } else {
-                    DB.projectsA.push({ id: DB.nextId(DB.projectsA), location, merchantName, constructDate, constructType, lng, lat, files: [...tempFilesA], createdAt: new Date().toISOString() });
+                    const newId = DB.nextId(DB.projectsA);
+                    DB.projectsA.push({ id: newId, location, merchantName, constructDate, constructType, lng, lat, files: [...tempFilesA], createdAt: new Date().toISOString() });
+                    sessionFileCache[newId] = tempFilesA.filter(f => f.dataUrl).map(f => ({ name: f.name, size: f.size, dataUrl: f.dataUrl }));
                 }
                 DB.save();
                 closeModal('A');
@@ -2063,18 +2071,27 @@
         ${r.lat ? `<div class="detail-item"><div class="detail-item-label">纬度</div><div class="detail-item-value">${r.lat}</div></div>` : ''}
         ${r.lng ? `<div class="detail-item"><div class="detail-item-label">经度</div><div class="detail-item-value">${r.lng}</div></div>` : ''}
       </div>
-      ${r.lat && r.lng ? `<div style="margin-top:10px"><a href="https://uri.amap.com/marker?position=${r.lng},${r.lat}&name=${encodeURIComponent(r.merchantName)}" target="_blank" class="btn btn-secondary btn-sm">🗺️ 在高德地图中查看</a></div>` : ''}
+      ${r.lat && r.lng ? `<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <a href="https://uri.amap.com/marker?position=${r.lng},${r.lat}&name=${encodeURIComponent(r.merchantName)}" target="_blank" class="btn btn-secondary btn-sm">🗺️ 在高德地图中查看</a>
+        <a href="https://uri.amap.com/navigation?to=${r.lng},${r.lat}&toName=${encodeURIComponent(r.merchantName)}&coordinate=gaode&callnative=1" target="_blank" class="btn btn-primary btn-sm">🧭 导航到此地</a>
+      </div>` : ''}
     </div>
     ${r.files && r.files.length ? `
     <div class="detail-section">
       <div class="detail-section-title">📎 施工文件 (${r.files.length})</div>
-      <div class="file-list">${r.files.map(f => `
-        <div class="file-item">
+      <div class="file-list">${(() => {
+        const cachedFiles = sessionFileCache[id] || [];
+        return r.files.map((f, i) => {
+          const c = cachedFiles[i];
+          const fileData = (c && c.dataUrl) ? { ...f, dataUrl: c.dataUrl } : f;
+          return `<div class="file-item">
           <span>📄</span>
-          <span class="file-item-name">${f.name}</span>
-          <span class="file-item-size">${formatSize(f.size)}</span>
-          ${f.dataUrl ? `<a href="${f.dataUrl}" download="${f.name}" class="btn btn-secondary btn-sm">⬇</a>` : ''}
-        </div>`).join('')}
+          <span class="file-item-name">${fileData.name}</span>
+          <span class="file-item-size">${formatSize(fileData.size)}</span>
+          ${fileData.dataUrl ? `<a href="${fileData.dataUrl}" download="${fileData.name}" class="btn btn-secondary btn-sm">⬇ 下载</a><a href="${fileData.dataUrl}" target="_blank" class="btn btn-secondary btn-sm">👁 预览</a>` : '<span style="color:var(--text-muted);font-size:11px">（刷新后需重新上传）</span>'}
+        </div>`;
+        }).join('');
+      })()}
       </div>
     </div>` : ''}
     <div class="detail-section">
@@ -2138,11 +2155,18 @@
     ${r.photos && r.photos.length ? `
     <div class="detail-section">
       <div class="detail-section-title">📷 巡查照片 (${r.photos.length})</div>
-      <div class="img-preview-list">${r.photos.map(p => `
-        <div class="img-preview-item" style="width:100px;height:100px;cursor:pointer" onclick="window.open('${p.dataUrl}','_blank')">
-          <img src="${p.dataUrl}" alt="${p.name}">
-        </div>`).join('')}
+      <div class="img-preview-list">${(() => {
+        const cached = sessionPhotoCache[id] || [];
+        return r.photos.map((p, i) => {
+          const c = cached[i];
+          const hasUrl = c && c.dataUrl;
+          return `<div class="img-preview-item" style="width:100px;height:100px;cursor:pointer" onclick="openLightboxFromDetail(${id},${i})" title="${p.name}">
+          ${hasUrl ? `<img src="${c.dataUrl}" alt="${p.name}">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--bg-panel);color:var(--text-muted);font-size:24px">📷</div>`}
+        </div>`;
+        }).join('');
+      })()}
       </div>
+      ${!(sessionPhotoCache[id] && sessionPhotoCache[id].some(c => c.dataUrl)) ? '<p style="font-size:12px;color:var(--text-muted);margin-top:8px">照片仅在上传当次会话中可预览，刷新页面后需重新上传</p>' : ''}
     </div>` : ''}`;
             document.getElementById('detail-edit-btn-B').onclick = () => { closeDetailModal('B'); openModal('B', id); };
             document.getElementById('detail-modal-B').classList.add('active');
@@ -2166,16 +2190,97 @@
         }
 
         // ================================================================
-        // MAP PICKER
+        // MAP PICKER (高德地图 JS API)
         // ================================================================
+        let _amapInstance = null;
+        let _amapMarker = null;
+        let _amapGeocoder = null;
+
         function openMapPicker() {
-            document.getElementById('map-address').value = document.getElementById('fA-location').value;
+            const currentAddr = document.getElementById('fA-location').value;
+            const currentLng = document.getElementById('fA-lng').value;
+            const currentLat = document.getElementById('fA-lat').value;
+            document.getElementById('map-address').value = currentAddr;
+            document.getElementById('map-lng').value = currentLng;
+            document.getElementById('map-lat').value = currentLat;
+            document.getElementById('map-search-input').value = currentAddr;
             document.getElementById('modal-map').classList.add('active');
+            // Initialize map after modal is visible
+            setTimeout(() => {
+                if (typeof AMap === 'undefined') {
+                    document.getElementById('amap-picker-container').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted)">地图加载中，请检查网络连接...</div>';
+                    return;
+                }
+                if (!_amapInstance) {
+                    _amapInstance = new AMap.Map('amap-picker-container', {
+                        zoom: 13,
+                        center: (currentLng && currentLat) ? [parseFloat(currentLng), parseFloat(currentLat)] : [116.397428, 39.90923]
+                    });
+                    _amapGeocoder = new AMap.Geocoder({ radius: 200 });
+                    _amapInstance.on('click', function (e) {
+                        const lng = e.lnglat.getLng();
+                        const lat = e.lnglat.getLat();
+                        setMapPoint(lng, lat, true);
+                    });
+                } else {
+                    _amapInstance.resize();
+                    if (currentLng && currentLat) {
+                        _amapInstance.setCenter([parseFloat(currentLng), parseFloat(currentLat)]);
+                    }
+                }
+                // Show existing marker if coords exist
+                if (currentLng && currentLat) {
+                    setMapPoint(parseFloat(currentLng), parseFloat(currentLat), false);
+                }
+            }, 200);
         }
+
+        function setMapPoint(lng, lat, doGeocode) {
+            document.getElementById('map-lng').value = lng.toFixed(6);
+            document.getElementById('map-lat').value = lat.toFixed(6);
+            if (_amapMarker) {
+                _amapMarker.setPosition([lng, lat]);
+            } else {
+                _amapMarker = new AMap.Marker({ position: [lng, lat], map: _amapInstance });
+            }
+            _amapInstance.setCenter([lng, lat]);
+            if (doGeocode && _amapGeocoder) {
+                _amapGeocoder.getAddress([lng, lat], function (status, result) {
+                    if (status === 'complete' && result.info === 'OK') {
+                        document.getElementById('map-address').value = result.regeocode.formattedAddress;
+                    }
+                });
+            }
+        }
+
+        function mapSearch() {
+            const keyword = document.getElementById('map-search-input').value.trim();
+            if (!keyword || typeof AMap === 'undefined') return;
+            if (!_amapGeocoder) _amapGeocoder = new AMap.Geocoder({ radius: 200 });
+            _amapGeocoder.getLocation(keyword, function (status, result) {
+                if (status === 'complete' && result.geocodes && result.geocodes.length > 0) {
+                    const loc = result.geocodes[0];
+                    const lng = loc.location.getLng();
+                    const lat = loc.location.getLat();
+                    document.getElementById('map-address').value = loc.formattedAddress;
+                    if (!_amapInstance) return;
+                    setMapPoint(lng, lat, false);
+                    _amapInstance.setZoom(15);
+                } else {
+                    toast('error', '未找到该地址，请换个关键词');
+                }
+            });
+        }
+
         function closeMapPicker() { document.getElementById('modal-map').classList.remove('active'); }
+
         function confirmMapAddress() {
             const addr = document.getElementById('map-address').value.trim();
+            const lng = document.getElementById('map-lng').value.trim();
+            const lat = document.getElementById('map-lat').value.trim();
             if (addr) document.getElementById('fA-location').value = addr;
+            if (lng) document.getElementById('fA-lng').value = lng;
+            if (lat) document.getElementById('fA-lat').value = lat;
             closeMapPicker();
         }
 
@@ -2254,6 +2359,24 @@
         // ================================================================
         let lbPhotos = [];
         let lbIndex = 0;
+
+        function openLightboxFromDetail(id, startIndex) {
+            const r = DB.inspectionsB.find(b => b.id === id);
+            if (!r || !r.photos || !r.photos.length) return;
+            const cached = sessionPhotoCache[id] || [];
+            lbPhotos = r.photos.map((p, i) => {
+                const c = cached[i];
+                return (c && c.dataUrl) ? { ...p, dataUrl: c.dataUrl } : p;
+            });
+            if (!lbPhotos.some(p => p.dataUrl)) {
+                toast('info', '照片仅在上传当次会话中可预览，刷新页面后需重新上传');
+                return;
+            }
+            lbIndex = startIndex || 0;
+            document.getElementById('lightbox').style.display = 'flex';
+            lbRender();
+            document.addEventListener('keydown', lbKeyHandler);
+        }
 
         function openLightbox(recordId, startIndex) {
             // Merge sessionPhotoCache (has dataUrl) with DB record photos
